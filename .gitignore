@@ -1,6 +1,7 @@
 resources/
 *.txt
-/ResNet50V1_12
+/models
+
 
 .idea/
 
