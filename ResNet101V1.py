@@ -29,7 +29,7 @@ base_model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='categorica
 resnet_history = base_model.fit(train_generator, validation_data=validation_generator,
                                 steps_per_epoch=16, epochs=100)
 
-base_model.save("ResNet101V1_12")
+base_model.save("models/ResNet101V1_12")
 #
 # print('\nHistory dict: ', resnet_history.history)
 # print("'loss': ", resnet_history.history['loss'])
