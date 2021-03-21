@@ -21,8 +21,6 @@ validation_generator = test_datagen.flow_from_directory("resources/TRUNK12_test/
 
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
-base_model.add(Dense(64, activation='ReLU'))
-base_model.add(Dense(32, activation='ReLU'))
 base_model.add(Dense(12, activation='softmax'))
 
 base_model.summary()

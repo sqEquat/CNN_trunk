@@ -1,0 +1,10 @@
+resources/
+*.txt
+
+.idea/
+
+.env
+
+.venv
+venv/
+ENV/

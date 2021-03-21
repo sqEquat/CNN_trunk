@@ -20,18 +20,16 @@ validation_generator = test_datagen.flow_from_directory("resources/TRUNK12_test/
 
 base_model = Sequential()
 base_model.add(ResNet101(include_top=False, weights='imagenet', pooling='max'))
-base_model.add(Dense(64, activation='ReLU'))
-base_model.add(Dense(32, activation='ReLU'))
 base_model.add(Dense(12, activation='softmax'))
 
 base_model.summary()
 
-# base_model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])
-#
-# resnet_history = base_model.fit(train_generator, validation_data=validation_generator,
-#                                 steps_per_epoch=16, epochs=100)
-#
-# base_model.save("ResNet101V1_12_2")
+base_model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])
+
+resnet_history = base_model.fit(train_generator, validation_data=validation_generator,
+                                steps_per_epoch=16, epochs=100)
+
+base_model.save("ResNet101V1_12")
 #
 # print('\nHistory dict: ', resnet_history.history)
 # print("'loss': ", resnet_history.history['loss'])
