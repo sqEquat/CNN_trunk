@@ -10,6 +10,14 @@ from tensorflow.python.keras.layers import Input, Dropout, Dense, GlobalAverageP
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 
+def resnet50_model():
+    model = Sequential()
+    model.add(ResNet50(include_top=False, pooling='avg', weights=None))
+    model.add(Dense(12, activation='softmax'))
+
+    return model
+
+
 batch_size = 10
 
 train_datagen = image.ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2, shear_range=0.2,
@@ -22,9 +30,7 @@ train_generator = train_datagen.flow_from_directory("resources/TRUNK12_test/Trai
 validation_generator = test_datagen.flow_from_directory("resources/TRUNK12_test/Val", batch_size=batch_size,
                                                         class_mode='categorical', target_size=(224, 224))
 
-base_model = Sequential()
-base_model.add(ResNet50(include_top=False, pooling='avg', weights=None))
-base_model.add(Dense(12, activation='softmax'))
+base_model = resnet50_model()
 
 base_model.summary()
 
