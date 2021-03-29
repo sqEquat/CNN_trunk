@@ -8,9 +8,11 @@ import os
 # Disable training on GPU
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-image_path = "resources/prediction/oak_1.jpg"
+image_path = "resources/prediction/biloba_1.jpg"
+batch_size = 10
+img_shape = (224, 224)
 
-model = keras.models.load_model("ResNet50V1_12")
+model = keras.models.load_model("models/resnet50/trunk12.48-0.7727.h5")
 
 img = image.load_img(image_path, target_size=(224, 224))
 img_array = image.img_to_array(img)

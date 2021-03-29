@@ -13,7 +13,7 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
 
 train_path = "resources/TRUNK12_test/Train"
 val_path = "resources/TRUNK12_test/Val"
-checkpoint_path = "models/resnet50/trunk12.{epoch:02d}-{val_acc:.4f}.h5"
+checkpoint_path = "models/resnet50/trunk12_{epoch:02d}_{val_acc:.4f}.h5"
 batch_size = 10
 img_shape = (224, 224)
 lr_rate = 0.001
@@ -30,7 +30,7 @@ def resnet50_model():
 
 
 def get_data_generators():
-    train_datagen = image.ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2, shear_range=0.2,
+    train_datagen = image.ImageDataGenerator(width_shift_range=0.3, height_shift_range=0.3, shear_range=0.3,
                                              vertical_flip=True, preprocessing_function=preprocess_input)
 
     val_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input)
@@ -38,30 +38,30 @@ def get_data_generators():
     train = train_datagen.flow_from_directory(train_path, batch_size=batch_size,
                                               class_mode='categorical', target_size=img_shape)
     validation = val_datagen.flow_from_directory(val_path, batch_size=batch_size,
-                                                  class_mode='categorical', target_size=img_shape)
+                                                 class_mode='categorical', target_size=img_shape)
 
     return train, validation
 
 
 def training(model, train, val):
     model.compile(optimizer=tf.keras.optimizers.Adam(lr=lr_rate), loss='categorical_crossentropy', metrics=['acc'])
-    reduce_lr = ReduceLROnPlateau(monitor='val_acc', factor=0.5, patience=3, verbose=1, min_lr=0.000001)
+    reduce_lr = ReduceLROnPlateau(monitor='val_acc', factor=0.5, patience=5, verbose=1, min_lr=0.000001)
     checkpoint = ModelCheckpoint(filepath=checkpoint_path, monitor='val_acc',
                                  verbose=1, save_best_only=True, mode='max')
     history = base_model.fit(train, validation_data=val, steps_per_epoch=step_per_epoch,
                              epochs=epochs, callbacks=[checkpoint, reduce_lr])
 
-    return history. model
+    return history, model
 
 
 base_model = resnet50_model()
 base_model.summary()
 train_gen, val_gen = get_data_generators()
 
-history, base_model = training(base_model, train_gen, val_gen)
+fit_history, base_model = training(base_model, train_gen, val_gen)
 
-print('\nHistory dict: ', resnet_history.history)
-print("'loss': ", resnet_history.history['loss'])
-print("'acc': ", resnet_history.history['acc'])
-print("'val_loss': ", resnet_history.history['val_loss'])
-print("'val_acc': ", resnet_history.history['val_acc'])
+print('\nHistory dict: ', fit_history.history)
+print("'loss': ", fit_history.history['loss'])
+print("'acc': ", fit_history.history['acc'])
+print("'val_loss': ", fit_history.history['val_loss'])
+print("'val_acc': ", fit_history.history['val_acc'])
