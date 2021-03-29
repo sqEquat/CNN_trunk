@@ -13,6 +13,10 @@ from tensorflow.python.keras.layers import Input, Dropout, Dense, GlobalAverageP
 train_path = "resources/TRUNK12_test/Train"
 val_path = "resources/TRUNK12_test/Val"
 batch_size = 10
+img_shape = (224, 224)
+lr_rate = 0.001
+step_per_epoch = 16
+epochs = 100
 
 
 def resnet50_model():
@@ -30,21 +34,21 @@ def get_data_generators():
     test_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input)
 
     train = train_datagen.flow_from_directory(train_path, batch_size=batch_size,
-                                              class_mode='categorical', target_size=(224, 224))
+                                              class_mode='categorical', target_size=img_shape)
     validation = test_datagen.flow_from_directory(val_path, batch_size=batch_size,
-                                                  class_mode='categorical', target_size=(224, 224))
+                                                  class_mode='categorical', target_size=img_shape)
 
     return train, validation
 
 
 base_model = resnet50_model()
 base_model.summary()
-base_model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])
+base_model.compile(optimizer=tf.keras.optimizers.Adam(lr=lr_rate), loss='categorical_crossentropy', metrics=['acc'])
 
 train_gen, val_gen = get_data_generators()
 
 resnet_history = base_model.fit(train_gen, validation_data=val_gen,
-                                steps_per_epoch=16, epochs=100)
+                                steps_per_epoch=step_per_epoch, epochs=epochs)
 
 base_model.save("models/ResNet50V1_12_32921")
 
