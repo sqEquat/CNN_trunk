@@ -31,7 +31,7 @@ def resnet50_model():
 
 def get_data_generators():
     train_datagen = image.ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2, shear_range=0.2,
-                                             rescale=0.3, vertical_flip=True, preprocessing_function=preprocess_input)
+                                             vertical_flip=True, preprocessing_function=preprocess_input)
 
     val_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input)
 
