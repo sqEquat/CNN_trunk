@@ -54,14 +54,15 @@ def training(model, train, val):
     return history, model
 
 
-base_model = resnet50_model()
-base_model.summary()
-train_gen, val_gen = get_data_generators()
+if __name__ == '__main__':
+    base_model = resnet50_model()
+    base_model.summary()
+    train_gen, val_gen = get_data_generators()
 
-fit_history, base_model = training(base_model, train_gen, val_gen)
+    fit_history, base_model = training(base_model, train_gen, val_gen)
 
-print('\nHistory dict: ', fit_history.history)
-print("'loss': ", fit_history.history['loss'])
-print("'acc': ", fit_history.history['acc'])
-print("'val_loss': ", fit_history.history['val_loss'])
-print("'val_acc': ", fit_history.history['val_acc'])
+    print('\nHistory dict: ', fit_history.history)
+    print("'loss': ", fit_history.history['loss'])
+    print("'acc': ", fit_history.history['acc'])
+    print("'val_loss': ", fit_history.history['val_loss'])
+    print("'val_acc': ", fit_history.history['val_acc'])
