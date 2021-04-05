@@ -1,6 +1,7 @@
 resources/
 *.txt
 /models
+/stat
 
 
 .idea/
