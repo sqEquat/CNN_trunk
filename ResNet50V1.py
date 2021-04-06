@@ -2,8 +2,7 @@ import tensorflow as tf
 import csv
 # import os
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications import ResNet50, ResNet101
-# from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.applications import ResNet50, ResNet101, ResNet101V2
 from tensorflow.keras.applications.resnet import preprocess_input
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dropout, Dense
@@ -16,8 +15,8 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
 train_path = "resources/TRUNK12_test/Train"
 val_path = "resources/TRUNK12_test/Val"
 
-checkpoint_path = "models/resnet50/resnet101_trunk12_{epoch:02d}_{val_acc:.4f}.h5"
-fit_result_csv = "stat/resnet50/040521_101.csv"
+checkpoint_path = "models/resnet50/resnet50_trunk12_040621_{epoch:02d}_{val_acc:.4f}.h5"
+fit_result_csv = "stat/resnet50/040621_50.csv"
 
 img_shape = (224, 224)
 train_samples_num = 305
