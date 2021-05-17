@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
 import pandas as pd
+from scipy.signal import resample
 from tensorflow import keras
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing import image
@@ -14,7 +15,7 @@ import os
 # Not using GPU
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-image_path = "resources/prediction/linden_1_cp.jpg"
+image_path = "resources/prediction/tree1/oak_1_c.jpg"
 val_path = "resources/TRUNK12_test/Val"
 batch_size = 10
 img_shape = (224, 224)
@@ -22,12 +23,12 @@ tree_types = ['Alder', 'Beech', 'Birch', 'Chestnut', 'Ginkgo biloba', 'Hornbeam'
              'Linden', 'Oak', 'Oriental plane', 'Pine', 'Spruce']
 
 
-def img_predict(path):
+def img_predict(path, cnn_model):
     img = image.load_img(path, target_size=img_shape)
     img_array = image.img_to_array(img)
     img_batch = np.expand_dims(img_array, axis=0)
     img_preprocessed = preprocess_input(img_batch) / 255
-    prediction = model.predict(img_preprocessed)
+    prediction = cnn_model.predict(img_preprocessed)
 
     return prediction
 
@@ -66,22 +67,19 @@ def pred_analyze(prediction, generator):
 if __name__ == '__main__':
 
     model = keras.models.load_model("models/resnet50/resnet50_trunk12_74_0.9250.h5")
-    pred = img_predict(image_path)
-    for i in range(len(pred[0])):
-        tree = tree_types[i] + ': '
-        print(tree, pred[0][i])
-
     # model.summary()
-    # pred, val = generator_predict(val_path)
-    # pred_analyze(pred, val)
+    # pred = img_predict(image_path)
+    # for i in range(len(pred[0])):
+    #     tree = tree_types[i] + ': '
+    #     print(tree, pred[0][i])
 
-    # directory = "resources/TRUNK12_test/Val/chestnut"
-    #
-    # for filename in os.listdir(directory):
-    #     if filename.endswith(".JPG") or filename.endswith(".png"):
-    #         print('==============================================')
-    #         print(os.path.join(directory, filename))
-    #         pred = img_predict(os.path.join(directory, filename))
-    #         for i in range(len(pred[0])):
-    #             tree = tree_types[i] + ': '
-    #             print(tree, pred[0][i])
+    directory = "resources/prediction/mytrunk"
+
+    for filename in os.listdir(directory):
+        if filename.endswith(".JPG") or filename.endswith(".png") or filename.endswith(".jpg"):
+            print('==============================================')
+            print(os.path.join(directory, filename))
+            pred = img_predict(os.path.join(directory, filename), model)
+            for i in range(len(pred[0])):
+                tree = tree_types[i] + ': '
+                print(tree, pred[0][i])
