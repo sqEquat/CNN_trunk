@@ -65,6 +65,7 @@ def predict():
         prediction = model.predict(processed_image).tolist()
 
         response = {'prediction': {tree_types[i] : prediction[0][i] for i in range(len(prediction[0]))}}
+        print(response)
         print(" * sending results")
         return jsonify(response)
     else:
