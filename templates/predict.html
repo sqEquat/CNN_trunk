@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Trunk12 Prediction</title>
+{% endblock %}
+
+
+{% block body %}
+<input id="image-selector" type="file">
+<button id="predict-button">Predict!</button>
+<p>Predictions</p>
+<p>Alder: <span id="alder-prediction"></span> </p>
+<p>Beech: <span id="beech-prediction"></span> </p>
+<p>Birch: <span id="birch-prediction"></span> </p>
+<p>Chestnut: <span id="chestnut-prediction"></span> </p>
+<p>Ginkgo biloba: <span id="gbiloba-prediction"></span> </p>
+<p>Hornbeam: <span id="hornbeam-prediction"></span> </p>
+<p>Horse chestnut: <span id="horsechestnut-prediction"></span> </p>
+<p>Linden: <span id="linden-prediction"></span> </p>
+<p>Oak: <span id="oak-prediction"></span> </p>
+<p>Oriental plane: <span id="orientalplane-prediction"></span> </p>
+<p>Pine: <span id="pine-prediction"></span> </p>
+<p>Spruce: <span id="spruce-prediction"></span> </p>
+<img id="selected-image" src="">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>"
+<script>
+    let base64Image;
+    $("#image-selector").change(function() {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let dataURL = reader.result;
+            $('#selected-image').attr("src", dataURL);
+            base64Image = dataURL.replace("data:image/jpeg;base64,", "");
+            console.log(base64Image);
+        }
+        reader.readAsDataURL($("#image-selector")[0].files[0]);
+        $("#alder-prediction").text("");
+        $("#beech-prediction").text("");
+        $("#birch-prediction").text("");
+        $("#chestnut-prediction").text("");
+        $("#gbiloba-prediction").text("");
+        $("#hornbeam-prediction").text("");
+        $("#horsechestnut-prediction").text("");
+        $("#linden-prediction").text("");
+        $("#oak-prediction").text("");
+        $("#orientalplane-prediction").text("");
+        $("#pine-prediction").text("");
+        $("#spruce-prediction").text("");
+    });
+
+    $("#predict-button").click(function(event){
+        let message = {
+            image: base64Image
+        }
+        console.log(message);
+        $.post("http://localhost:5000/predict", JSON.stringify(message), function(response){
+            $("#alder-prediction").text(response.prediction.Alder.toFixed(6));
+            $("#beech-prediction").text(response.prediction.Beech.toFixed(6));
+            $("#birch-prediction").text(response.prediction.Birch.toFixed(6));
+            $("#chestnut-prediction").text(response.prediction.Chestnut.toFixed(6));
+            $("#gbiloba-prediction").text(response.prediction.Ginkgo_biloba.toFixed(6));
+            $("#hornbeam-prediction").text(response.prediction.Hornbeam.toFixed(6));
+            $("#horsechestnut-prediction").text(response.prediction.Horse_chestnut.toFixed(6));
+            $("#linden-prediction").text(response.prediction.Linden.toFixed(6));
+            $("#oak-prediction").text(response.prediction.Oak.toFixed(6));
+            $("#orientalplane-prediction").text(response.prediction.Oriental_plane.toFixed(6));
+            $("#pine-prediction").text(response.prediction.Pine.toFixed(6));
+            $("#spruce-prediction").text(response.prediction.Spruce.toFixed(6));
+        });
+     });
+</script>
+{% endblock %}
