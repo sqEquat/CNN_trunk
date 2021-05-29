@@ -73,13 +73,26 @@ if __name__ == '__main__':
     #     tree = tree_types[i] + ': '
     #     print(tree, pred[0][i])
 
-    directory = "resources/prediction/mytrunk"
+    directory = "resources/prediction/pine"
 
+    count = 1
+    confusion_str = [0 for i in range(0, 12)]
     for filename in os.listdir(directory):
         if filename.endswith(".JPG") or filename.endswith(".png") or filename.endswith(".jpg"):
-            print('==============================================')
-            print(os.path.join(directory, filename))
-            pred = img_predict(os.path.join(directory, filename), model)
-            for i in range(len(pred[0])):
-                tree = tree_types[i] + ': '
-                print(tree, pred[0][i])
+
+            pred = img_predict(os.path.join(directory, filename), model)[0]
+            idx = np.argmax(pred)
+            confusion_str[idx] += 1
+            print(count, filename, tree_types[idx])
+            count += 1
+
+    print(confusion_str)
+
+    # for filename in os.listdir(directory):
+    #     if filename.endswith(".JPG") or filename.endswith(".png") or filename.endswith(".jpg"):
+    #         print('==============================================')
+    #         print(os.path.join(directory, filename))
+    #         pred = img_predict(os.path.join(directory, filename), model)
+    #         for i in range(len(pred[0])):
+    #             tree = tree_types[i] + ': '
+    #             print(tree, pred[0][i])
