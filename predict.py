@@ -22,6 +22,8 @@ img_shape = (224, 224)
 tree_types = ['Alder', 'Beech', 'Birch', 'Chestnut', 'Ginkgo biloba', 'Hornbeam', 'Horse chestnut',
              'Linden', 'Oak', 'Oriental plane', 'Pine', 'Spruce']
 
+tree_types_new = ['Birch', 'Pine', 'Spruce']
+
 
 def img_predict(path, cnn_model):
     img = image.load_img(path, target_size=img_shape)
@@ -66,24 +68,24 @@ def pred_analyze(prediction, generator):
 
 if __name__ == '__main__':
 
-    model = keras.models.load_model("models/resnet50/resnet50_trunk12_74_0.9250.h5")
+    model = keras.models.load_model("models/resnet50/resnet50_trunk3_053021_22_0.9500.h5")
     # model.summary()
     # pred = img_predict(image_path)
     # for i in range(len(pred[0])):
     #     tree = tree_types[i] + ': '
     #     print(tree, pred[0][i])
 
-    directory = "resources/prediction/pine"
+    directory = "resources/prediction/trunkmo/spruce"
 
     count = 1
-    confusion_str = [0 for i in range(0, 12)]
+    confusion_str = [0 for i in range(0, 3)]
     for filename in os.listdir(directory):
         if filename.endswith(".JPG") or filename.endswith(".png") or filename.endswith(".jpg"):
 
             pred = img_predict(os.path.join(directory, filename), model)[0]
             idx = np.argmax(pred)
             confusion_str[idx] += 1
-            print(count, filename, tree_types[idx])
+            print(count, filename, tree_types_new[idx])
             count += 1
 
     print(confusion_str)
