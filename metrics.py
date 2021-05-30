@@ -32,12 +32,18 @@ if __name__ == '__main__':
         [0, 0, 9, 0, 0, 0, 0, 1, 0, 0, 1, 100]
     ]
 
-    con_mat = np.array(trunkmo_con_mat)
+    trunkmo3_con_mat = [
+        [89, 0, 15],
+        [16, 77, 16],
+        [9, 1, 101]
+    ]
+
+    con_mat = np.array(trunkmo3_con_mat)
     # con_mat = tf.math.confusion_matrix(generator.labels, y_pred).numpy()
     con_mat_norm = np.around(con_mat.astype('float') / con_mat.sum(axis=1)[:, np.newaxis], decimals=2)
     con_mat_df = pd.DataFrame(con_mat_norm,
                               index=tree_types_mo,
-                              columns=tree_types_ru)
+                              columns=tree_types_mo)
 
     figure = plt.figure(figsize=(8, 8))
     sns.heatmap(con_mat_df, annot=True, cmap=cm.Blues)
