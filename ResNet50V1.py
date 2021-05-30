@@ -1,6 +1,7 @@
 import tensorflow as tf
 import csv
 # import os
+from tensorflow import keras
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications import ResNet50, ResNet101, ResNet101V2
 from tensorflow.keras.applications.resnet import preprocess_input
@@ -15,31 +16,51 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
 train_path = "resources/TRUNK12_test/Train"
 val_path = "resources/TRUNK12_test/Val"
 
-checkpoint_path = "models/resnet50/resnet50_trunk12_040621_{epoch:02d}_{val_acc:.4f}.h5"
-fit_result_csv = "stat/resnet50/040621_50.csv"
+checkpoint_path = "models/resnet50/resnet50_trunk3_053021_{epoch:02d}_{val_acc:.4f}.h5"
+fit_result_csv = "stat/resnet50/053021_50.csv"
 
 img_shape = (224, 224)
-train_samples_num = 305
-val_samples_num = 86
+train_samples_num = 261
+val_samples_num = 63
 
 batch_size = 10
 lr_rate = 0.001
 epochs = 100
 
 
+
+def resnet50_transfer_model(model_path, class_num):
+    pretrained_model = keras.models.load_model(model_path)
+    pretrained_model.summary()
+    base_model = Sequential()
+    for layer in pretrained_model.layers[:-1]:
+        layer.trainable = False
+        base_model.add(layer)
+
+    base_model.add(Dense(class_num, activation='softmax'))
+    base_model.summary()
+
+    return base_model
+
+
+def transfer_learning_fit_gen(dataset_path):
+    train_datagen = image.ImageDataGenerator(rescale=1./255, width_shift_range=0.3, height_shift_range=0.3,
+                                             shear_range=0.3, vertical_flip=True, validation_split=0.2,
+                                             preprocessing_function=preprocess_input)
+
+    train_gen = train_datagen.flow_from_directory(dataset_path, target_size=img_shape, batch_size=batch_size,
+                                                  class_mode='categorical', subset='training')
+
+    val_gen = train_datagen.flow_from_directory(dataset_path, target_size=img_shape, batch_size=batch_size,
+                                                class_mode='categorical', subset='validation')
+
+    return train_gen, val_gen
+
+
 def resnet50_model():
     model = Sequential()
     model.add(ResNet50(include_top=False, pooling='avg', weights=None))
     model.add(Dense(12, activation='softmax'))
-
-    return model
-
-
-def resnet101_model():
-    model = Sequential()
-    model.add(ResNet101(include_top=False, pooling='avg', weights=None))
-    model.add(Dense(12, activation='softmax'))
-
     return model
 
 
@@ -72,11 +93,17 @@ def training(model_base, train_gen, val_gen):
 
 
 if __name__ == '__main__':
-    train, val = get_data_generators()
-    base_model = resnet50_model()
-    fit_history = training(base_model, train, val)
+    # train, val = get_data_generators()
+    # base_model = resnet50_model()
+    # fit_history = training(base_model, train, val)
+    base_model_path = "models/resnet50/resnet50_trunk12_74_0.9250.h5"
+    dataset_path = "resources/prediction/trunkmo"
+    model_classes_num = 3
+    model = resnet50_transfer_model(base_model_path, model_classes_num)
+    train_gen, val_gen = transfer_learning_fit_gen(dataset_path)
+    fit_history = training(model, train_gen, val_gen)
 
-    print('\nHistory dict: ', fit_history.history)
+    print('\nTraining metrics: ')
     print("'loss': ", fit_history.history['loss'])
     print("'acc': ", fit_history.history['acc'])
     print("'val_loss': ", fit_history.history['val_loss'])
